@@ -1,11 +1,12 @@
 import httpx
 from bs4 import BeautifulSoup
+from extract import extract_text
 
 # url = "https://wiki.python.org/python/getting-started/doc-harvest-missing-page.html"
 url = "https://wiki.python.org/python/getting-started/BeginnersGuide.html"
 
-
 response = httpx.get(url, timeout=10.0)
+# print("Response:", response.text)
 content_type = response.headers.get("content-type", "")
 media_type = content_type.split(";", 1)[0].strip().lower()
 
@@ -14,6 +15,5 @@ if not response.is_success:
 elif media_type != "text/html":
     print("Skipping non-HTML content type:", content_type)
 else:
-    soup = BeautifulSoup(response.text, "html.parser")
-    title = soup.find("title")
-    print("Page title:", title.get_text(strip=True) if title else "(no title)")
+    extract_text = extract_text(response.text)
+    print("Text preview:", extract_text)
